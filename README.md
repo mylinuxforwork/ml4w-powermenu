@@ -5,6 +5,8 @@ slides in from the right edge of the screen with buttons to lock the screen,
 suspend, log out, reboot and power off. Part of
 [ML4W OS](https://github.com/mylinuxforwork/dotfiles), but it also runs on its own.
 
+![ML4W Power Menu](screenshots/powermenu.jpg)
+
 ## Installation
 
 ```bash
