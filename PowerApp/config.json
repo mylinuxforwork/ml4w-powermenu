@@ -1,0 +1,75 @@
+/*
+Default configuration file for the ML4W Power Menu.
+
+This file documents the built-in defaults (kept in sync with defaultSettings in
+PowerSettings.qml). The power menu itself reads a single file:
+
+  ~/.config/ml4w-powermenu/config.json
+
+It is created empty on first start and merged over the built-in defaults below,
+so it only needs to carry the values you want to change. It is watched, so
+changes apply as soon as the file is saved.
+
+powermenu.order lists the buttons from top to bottom. The available buttons
+are lock, suspend, logout, reboot and poweroff. Leave one out to hide it.
+
+commands.<button> is what a click on that button runs. It is run through bash,
+so a leading ~, arguments and pipes all work.
+
+powermenu.marginRight is the distance of the open menu from the right edge of
+the screen.
+
+powermenu.editorCommand opens config.json when `edit` is called over IPC. The
+file path is appended as the last argument. When it is empty or its program
+cannot be found, xdg-open is used instead.
+
+border.colorTop / border.colorBottom override the colors of the gradient border
+(e.g. "#ff0000"). Empty uses the theme colors.
+
+theme.colorsFile is the JSON file of Material color roles the power menu takes
+its colors from (matugen's templates/colors.json format). It is watched, so the
+power menu recolors whenever the file changes.
+*/
+{
+    "powermenu": {
+        "order": [
+            "lock",
+            "suspend",
+            "logout",
+            "reboot",
+            "poweroff"
+        ],
+        "marginRight": 0,
+        "editorCommand": "~/.config/ml4w/settings/editor.sh"
+    },
+    "commands": {
+        "lock": "~/.config/ml4w/scripts/ml4w-power -l",
+        "suspend": "~/.config/ml4w/scripts/ml4w-power -s",
+        "logout": "~/.config/ml4w/scripts/ml4w-power -e",
+        "reboot": "~/.config/ml4w/scripts/ml4w-power -r",
+        "poweroff": "~/.config/ml4w/scripts/ml4w-power -p"
+    },
+    "button": {
+        "size": 50,
+        "iconSize": 22,
+        "spacing": 20,
+        "borderWidth": 1
+    },
+    "pill": {
+        "radius": 40,
+        "paddingX": 15,
+        "paddingY": 20,
+        "animationDuration": 350
+    },
+    "border": {
+        "width": 2,
+        "colorTop": "",
+        "colorBottom": ""
+    },
+    "opacity": {
+        "normal": 0.9
+    },
+    "theme": {
+        "colorsFile": "~/.config/ml4w-powermenu/colors.json"
+    }
+}

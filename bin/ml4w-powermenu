@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+# Start the ML4W Power Menu or send it an IPC call
+#
+
+set -euo pipefail
+
+# The power menu lives one level above this script. Resolve the symlink in
+# ~/.local/bin so the script also works from any other clone.
+MENU_DIR="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+
+IPC_FUNCTIONS=(
+    toggle open close
+    reload edit
+)
+
+usage() {
+    cat <<USAGE
+Usage: ml4w-powermenu [command]
+
+Commands:
+  start             Start the power menu (default, does nothing if it is already running)
+  stop              Stop the power menu
+  restart           Stop and start the power menu
+  toggle            Show or hide the power menu
+  open              Show the power menu
+  close             Hide the power menu
+  reload            Re-read config.json and apply it
+  edit              Open config.json in the configured editor
+  help              Show this help
+USAGE
+}
+
+if ! command -v qs >/dev/null 2>&1; then
+    echo ":: ERROR: quickshell (qs) is required but not installed." >&2
+    exit 1
+fi
+
+command="${1:-start}"
+
+case "$command" in
+    start)
+        exec qs -n -p "$MENU_DIR"
+        ;;
+    stop)
+        qs kill -p "$MENU_DIR"
+        ;;
+    restart)
+        qs kill -p "$MENU_DIR" >/dev/null 2>&1 || true
+        exec qs -n -p "$MENU_DIR"
+        ;;
+    help | -h | --help)
+        usage
+        ;;
+    *)
+        for fn in "${IPC_FUNCTIONS[@]}"; do
+            if [ "$command" = "$fn" ]; then
+                exec qs -p "$MENU_DIR" ipc call power "$command"
+            fi
+        done
+        echo ":: ERROR: Unknown command: $command" >&2
+        usage >&2
+        exit 1
+        ;;
+esac
