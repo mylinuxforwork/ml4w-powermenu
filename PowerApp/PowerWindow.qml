@@ -18,6 +18,8 @@ PanelWindow {
 
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
+    // Grab the keyboard while open so arrows, Return and Escape reach the menu.
+    WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     // 20px around the pill leave room for its shadow.
     implicitWidth: panelBg.implicitWidth + 40
@@ -45,7 +47,8 @@ PanelWindow {
 
     onIsOpenChanged: {
         if (isOpen) {
-            selectedIndex = -1
+            // Start keyboard navigation on the first button.
+            selectedIndex = buttons.length > 0 ? 0 : -1
             panelBg.forceActiveFocus()
         }
     }
