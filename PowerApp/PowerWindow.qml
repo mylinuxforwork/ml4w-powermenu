@@ -1,6 +1,5 @@
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Hyprland
 import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
@@ -21,20 +20,22 @@ PanelWindow {
     // Grab the keyboard while open so arrows, Return and Escape reach the menu.
     WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
-    // 20px around the pill leave room for its shadow.
-    implicitWidth: panelBg.implicitWidth + 40
-    implicitHeight: panelBg.implicitHeight + 40
     color: "transparent"
 
+    // The window covers the whole screen so clicks outside the pill can be
+    // caught and close the menu. The pill itself slides in and out inside it.
     anchors {
+        top: true
+        bottom: true
+        left: true
         right: true
     }
 
     // Click outside to close.
-    HyprlandFocusGrab {
-        windows: [root]
-        active: root.isOpen
-        onCleared: root.isOpen = false
+    MouseArea {
+        anchors.fill: parent
+        enabled: root.isOpen
+        onClicked: root.isOpen = false
     }
 
     Shortcut {
@@ -61,16 +62,19 @@ PanelWindow {
         isOpen = false
     }
 
-    // Keep the window mapped to the screen while the animation is playing.
-    visible: isOpen || slideAnim.running
+    // The window stays mapped so Hyprland's layer open/close animations never
+    // play on the full-screen surface. While closed, an empty input mask lets
+    // all clicks pass through to the windows below.
+    mask: isOpen ? null : emptyMask
 
-    margins {
-        right: root.currentMargin
+    Region {
+        id: emptyMask
     }
 
-    // Closed, the window sits fully off the right edge of the screen.
-    property real currentMargin: isOpen ? settings.powermenu.marginRight
-                                        : -(implicitWidth + 50)
+    // Distance of the pill's right edge from the screen's right edge. 20px
+    // leave room for its shadow. Closed, the pill sits fully off screen.
+    property real currentMargin: isOpen ? settings.powermenu.marginRight + 20
+                                        : -(panelBg.implicitWidth + 70)
 
     Behavior on currentMargin {
         NumberAnimation {
@@ -98,9 +102,16 @@ PanelWindow {
         id: panelBg
         implicitWidth: root.settings.button.size + 2 * root.settings.pill.paddingX
         implicitHeight: buttonLayout.implicitHeight + 2 * root.settings.pill.paddingY
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        x: parent.width - width - root.currentMargin
+        visible: root.isOpen || slideAnim.running
 
         focus: true
+
+        // Swallow clicks on the pill itself so they don't close the menu.
+        MouseArea {
+            anchors.fill: parent
+        }
 
         Keys.onUpPressed: {
             if (root.selectedIndex <= 0)
