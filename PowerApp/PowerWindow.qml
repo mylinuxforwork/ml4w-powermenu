@@ -16,6 +16,9 @@ PanelWindow {
     readonly property var buttons: PowerSettings.buttons
 
     WlrLayershell.layer: WlrLayer.Overlay
+    // Lets Hyprland layer rules match the menu, e.g. to turn off its
+    // open/close animation (see README).
+    WlrLayershell.namespace: "ml4w-powermenu"
     exclusionMode: ExclusionMode.Ignore
     // Grab the keyboard while open so arrows, Return and Escape reach the menu.
     WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
@@ -62,9 +65,13 @@ PanelWindow {
         isOpen = false
     }
 
-    // The window stays mapped so Hyprland's layer open/close animations never
-    // play on the full-screen surface. While closed, an empty input mask lets
-    // all clicks pass through to the windows below.
+    // Only map the full-screen surface while the menu is open or sliding out.
+    // Keeping a transparent full-screen overlay mapped all the time turns the
+    // whole screen black where the compositor fails to draw transparency.
+    visible: isOpen || slideAnim.running
+
+    // While sliding out, an empty input mask lets clicks pass through to the
+    // windows below.
     mask: isOpen ? null : emptyMask
 
     Region {

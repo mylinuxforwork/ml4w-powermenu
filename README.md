@@ -55,6 +55,14 @@ hl.bind("SUPER + CTRL + P", hl.dsp.exec_cmd("ml4w-powermenu toggle"))
 Use the arrow keys and Enter to pick a button, Escape or a click outside to
 close the menu.
 
+The menu brings its own slide animation. To keep Hyprland's layer animation
+from playing on top of it, add this rule to your Hyprland config (the ML4W
+Dotfiles already include it):
+
+```
+hl.layer_rule({ match = { namespace = "ml4w-powermenu" }, no_anim = true })
+```
+
 ## IPC
 
 ```bash
