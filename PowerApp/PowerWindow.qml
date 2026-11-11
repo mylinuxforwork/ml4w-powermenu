@@ -136,43 +136,36 @@ PanelWindow {
         Keys.onEnterPressed: root.activate(root.selectedIndex)
 
         RectangularShadow {
+            // Hidden while blur is on: the blur would end in a hard edge
+            // around the background (see PowerTheme.blurEnabled).
+            visible: !PowerTheme.blurEnabled
             anchors.fill: mainBgRect
             radius: mainBgRect.radius
             blur: 15
             color: Qt.rgba(PowerTheme.shadow.r, PowerTheme.shadow.g, PowerTheme.shadow.b, 0.4)
         }
 
-        Rectangle {
+        // Background: fill + gradient border, each with its own opacity
+        // (PowerBackground). The shared opacity (theme.opacityFile) wins over
+        // opacity.normal when it is set; the border follows it or stays at 80%
+        // (theme.transparentBorderFile).
+        PowerBackground {
             id: mainBgRect
             anchors.fill: parent
             radius: root.settings.pill.radius
-            // Only the background is transparent, not the buttons.
-            opacity: root.settings.opacity.normal
+            borderWidth: root.settings.border.width
+            fillOpacity: PowerTheme.globalOpacity >= 0
+                ? PowerTheme.globalOpacity / 100
+                : root.settings.opacity.normal
 
-            // Gradient border (outer)
-            gradient: Gradient {
-                orientation: Gradient.Vertical
-                GradientStop {
-                    position: 0.0
-                    color: root.settings.border.colorTop !== ""
-                        ? root.settings.border.colorTop
-                        : PowerTheme.primary
-                }
-                GradientStop {
-                    position: 1.0
-                    color: root.settings.border.colorBottom !== ""
-                        ? root.settings.border.colorBottom
-                        : PowerTheme.on_primary
-                }
-            }
-
-            // Background fill (inner), inset by the border thickness
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: root.settings.border.width
-                radius: Math.max(0, parent.radius - anchors.margins)
-                color: PowerTheme.background
-            }
+            // Border colors come from the settings file; empty strings fall
+            // back to the dynamic wallpaper theme.
+            colorTop: root.settings.border.colorTop !== ""
+                ? root.settings.border.colorTop
+                : PowerTheme.primary
+            colorBottom: root.settings.border.colorBottom !== ""
+                ? root.settings.border.colorBottom
+                : PowerTheme.on_primary
         }
 
         ColumnLayout {

@@ -31,7 +31,10 @@ Singleton {
                        "animationDuration": 350 },
         "border":    { "width": 2, "colorTop": "", "colorBottom": "" },
         "opacity":   { "normal": 0.9 },
-        "theme":     { "colorsFile": "~/.config/ml4w-powermenu/colors.json" }
+        "theme":     { "colorsFile": "~/.config/ml4w-powermenu/colors.json",
+                       "opacityFile": "~/.config/ml4w/settings/quickshell-opacity",
+                       "transparentBorderFile": "~/.config/ml4w/settings/quickshell-transparent-border",
+                       "blurFile": "~/.config/ml4w/settings/quickshell-blur" }
     })
 
     // The buttons the menu knows, with the icon each one shows. The order in

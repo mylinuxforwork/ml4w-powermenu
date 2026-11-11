@@ -111,6 +111,14 @@ default value.
   animation and transparency of the menu.
 - `theme.colorsFile` is a JSON file of Material color roles (matugen's
   `colors.json` format). The power menu watches it and recolors when it changes.
+- `theme.opacityFile` is a plain file holding a background opacity in percent
+  (0-100), shared with the rest of the ML4W shell. While it holds a number it
+  overrides `opacity.normal`. Set it to `""` to always use `opacity.normal`.
+- `theme.transparentBorderFile` holds `on` or `off`. On (also when the file is
+  missing): the border fades with the background. Off: it stays at 80%.
+- `theme.blurFile` holds `on` or `off` (ML4W's Blur switch). While it is `on`
+  the drop shadow is hidden, because the compositor blur would end in a hard
+  edge around it.
 
 All commands are run through bash, so `~`, arguments and pipes work.
 
